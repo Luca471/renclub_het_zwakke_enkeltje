@@ -1,1 +1,5 @@
 streamlit
+pandas
+datetime
+boto3
+json
