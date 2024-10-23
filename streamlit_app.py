@@ -97,8 +97,16 @@ total_kms_execute = sum(df['Kilometers'])
 if total_kms_execute > 0:
     total_kms_execute = round(total_kms_execute/1000,2)
 
+# Sort by 'Kilometers' in descending order
+df = df.sort_values(by='Kilometers', ascending=False)
+
+# Reset the index and start from 1
+df.reset_index(drop=True, inplace=True)
+df.index += 1
+
 df['Kilometers'] = [str(round(val/1000,1)).replace('.',',') for val in df['Kilometers']]
 df["Laatste activiteit"] = [val.strftime("%d-%m-%Y") if val != '-' else val for val in df["Laatste activiteit"]]
+
 
 # Constants
 start_year = 2024  
