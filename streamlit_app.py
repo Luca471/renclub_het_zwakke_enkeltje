@@ -69,6 +69,11 @@ athletes = {athlete.get('athlete_id'): {'Atleet': json.loads(athlete.get('data')
 table = dynamodb.Table('activities') 
 activities = get_all_dynamodb_items(table)
 
+athletes = {athlete.get('athlete_id'): {'Atleet': json.loads(athlete.get('data')).get('firstname'), 'Kilometers': 0, 'Activiteiten': 0, 'Laatste activiteit': '-'} for athlete in athletes}
+
+table = dynamodb.Table('activities') 
+activities = get_all_dynamodb_items(table)
+
 for activity in activities:
     data = json.loads(activity['data'])
     athlete_id = data.get('athlete').get('id')
@@ -82,17 +87,19 @@ for activity in activities:
         athletes[athlete_id]['Kilometers'] += distance
         athletes[athlete_id]['Activiteiten'] += 1
         if athletes[athlete_id].get("Laatste activiteit"):
-            if athletes[athlete_id].get("Laatste activiteit") < start_date:
+            if athletes[athlete_id].get("Laatste activiteit") == '-' or athletes[athlete_id].get("Laatste activiteit") < start_date:
                 athletes[athlete_id]["Laatste activiteit"] = start_date
         else:
             athletes[athlete_id]["Laatste activiteit"] = start_date
 
 
 df = pd.DataFrame(athletes.values())
-total_kms_execute = round(sum(df['Kilometers'])/1000,1)
+total_kms_execute = sum(df['Kilometers'])
+if total_kms_execute > 0:
+    total_kms_execute = round(total_kms_execute/1000,2)
+
 df['Kilometers'] = [str(round(val/1000,1)).replace('.',',') for val in df['Kilometers']]
-df["Laatste activiteit"] = [val.strftime("%d-%m-%Y") for val in df["Laatste activiteit"]]
-df.index += 1
+df["Laatste activiteit"] = [val.strftime("%d-%m-%Y") if val != '-' else val for val in df["Laatste activiteit"]]
 
 # Constants
 start_year = 2024  
