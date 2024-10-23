@@ -64,7 +64,6 @@ dynamodb = session.resource('dynamodb')
 
 table = dynamodb.Table('athlete_credentials') 
 athletes = get_all_dynamodb_items(table)
-athletes = {athlete.get('athlete_id'): {'Atleet': json.loads(athlete.get('data')).get('firstname'), 'Kilometers': 0, 'Activiteiten': 0} for athlete in athletes}
 
 table = dynamodb.Table('activities') 
 activities = get_all_dynamodb_items(table)
