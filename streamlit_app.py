@@ -104,7 +104,7 @@ df["Laatste activiteit"] = [val.strftime("%d-%m-%Y") if val != '-' else val for 
 start_year = 2024  
 start_week = 42 
 total_weeks = 26
-total_kms = 2000
+total_kms = 7500
 
 weeks_count = weeks_since(start_year, start_week)
 
