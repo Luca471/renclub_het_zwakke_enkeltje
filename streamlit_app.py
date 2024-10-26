@@ -59,7 +59,7 @@ def main():
 
     st.write(f'Week {weeks_count}/{TOTAL_WEEKS}')
 
-    st.write(f"{total_kms_execute}/{TOTAL_KMS} km")
+    st.write(f"{round(total_kms_execute,1)}/{TOTAL_KMS} km")
 
     st.bar_chart(bar_df, x="Eenheid", y="Waarde", stack = True, color='Kleur', horizontal=True, x_label='', y_label='')
 
