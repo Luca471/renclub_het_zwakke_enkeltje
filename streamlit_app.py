@@ -15,6 +15,9 @@ from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS
 from utils import weeks_since, get_all_dynamodb_items
 from data_processing import process_ranking, process_activities
 
+aws_access_key_id = st.secrets["aws_access_key_id"]
+aws_secret_access_key = st.secrets["aws_secret_access_key"]
+
 def main():
 
     # Initialize a session using your AWS credentials
@@ -49,11 +52,13 @@ def main():
 
     bar_df = pd.DataFrame(bar_data)
 
-    # Display data using streamlit
-
+    # Set the app title 
     st.title('Renclub het zwakke enkeltje') 
+    # Add a welcome message 
     st.write('14 mannen, 6 maanden, 1 challenge.') 
+
     st.write(f'Week {weeks_count}/{TOTAL_WEEKS}')
+
     st.write(f"{total_kms_execute}/{TOTAL_KMS} km")
 
     st.bar_chart(bar_df, x="Eenheid", y="Waarde", stack = True, color='Kleur', horizontal=True, x_label='', y_label='')
