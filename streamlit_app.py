@@ -7,6 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 import pandas as pd
 import streamlit as st
+import altair as alt
 
 # Import local configuration
 from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS
@@ -14,12 +15,12 @@ from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS
 # Import local utility functions
 from utils import weeks_since, get_all_dynamodb_items
 from data_processing import process_ranking, process_activities
+from visualisation.plotting import create_progress_chart
 
 aws_access_key_id = st.secrets["aws_access_key_id"]
 aws_secret_access_key = st.secrets["aws_secret_access_key"]
 
 def main():
-
     # Initialize a session using your AWS credentials
     session = boto3.Session(
         aws_access_key_id=aws_access_key_id,
@@ -85,6 +86,9 @@ def main():
         }
     )
 
+    # Generate and display the progress chart
+    line_chart = create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, START_YEAR, START_WEEK)
+    st.altair_chart(line_chart, use_container_width=True)
+
 if __name__ == "__main__":
-    
     main()
