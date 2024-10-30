@@ -38,7 +38,7 @@ def process_ranking(athlete_data, activity_data):
         athlete.get(ATHLETE_ID): {
             'Profile_pic': json.loads(athlete.get(ATHLETE_DATA)).get(PROFILE_PIC),
             'Atleet': json.loads(athlete.get(ATHLETE_DATA)).get(FIRST_NAME),
-            'Kilometers': 0,
+            'Kilometers': 0,  # Keep as 'Kilometers' here for compatibility
             'Activiteiten': 0,
             LAST_ACTIVITY: DEFAULT_LAST_ACTIVITY
         } for athlete in athlete_data
@@ -70,11 +70,13 @@ def process_ranking(athlete_data, activity_data):
     # Sort by 'Kilometers' in descending order
     df = df.sort_values(by='Kilometers', ascending=False)
 
-    # Round KMs
-    df['Kilometers'] = [round(val/1000,1) for val in df['Kilometers']]
+    # Round Kilometers values and rename the column to 'KM'
+    df['Kilometers'] = [round(val / 1000, 1) for val in df['Kilometers']]
+    df.rename(columns={'Kilometers': 'KM', 'Activiteiten': 'Act.'}, inplace=True)
 
-    # Reset the index and start from 1
+    # Add a 'Ranking' column for the index instead of setting it as index
     df.reset_index(drop=True, inplace=True)
     df.index += 1
+    df.insert(0, '', df.index)  # Insert as the first column
 
     return df
