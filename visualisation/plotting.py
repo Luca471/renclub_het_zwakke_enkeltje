@@ -34,7 +34,7 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
     activity_df['Weeks_Since_Start'] = activity_df.apply(calculate_weeks_since, axis=1)
 
     # Group by week and sum distances
-    weekly_km = activity_df.groupby('Weeks_Since_Start')['Afstand (km)'].sum().reset_index()
+    weekly_km = activity_df.groupby('Weeks_Since_Start')['KM'].sum().reset_index()
 
     # Ensure all weeks are represented up to TOTAL_WEEKS
     weeks = pd.DataFrame({'Weeks_Since_Start': range(0, TOTAL_WEEKS + 1)})
@@ -43,10 +43,10 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
     weekly_km = weeks.merge(weekly_km, on='Weeks_Since_Start', how='left')
 
     # Fill missing values with zero
-    weekly_km['Afstand (km)'] = weekly_km['Afstand (km)'].fillna(0)
+    weekly_km['KM'] = weekly_km['KM'].fillna(0)
 
     # Compute cumulative sum
-    weekly_km['Cumulative_KM'] = weekly_km['Afstand (km)'].cumsum()
+    weekly_km['Cumulative_KM'] = weekly_km['KM'].cumsum()
 
     # Limit actual progress to current week
     weekly_km_actual = weekly_km[weekly_km['Weeks_Since_Start'] <= weeks_count]
