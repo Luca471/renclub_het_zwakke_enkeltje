@@ -104,10 +104,11 @@ def process_activities(athlete_data, activity_data):
             activities.append({
                 'Profile_pic': athlete_info['Profile_pic'],
                 'Atleet': athlete_info['Atleet'],
+                'KM': data.get(DISTANCE),
+                'Tempo': pace_from_distance_time(data.get(DISTANCE), data.get(ELAPSED_TIME)),
+                'Tijd': format_time(data.get(ELAPSED_TIME)),
                 'Datum': data.get(START_DATE),
                 'Activiteit': data.get('name'),
-                'Afstand (km)': data.get(DISTANCE),
-                'Tijd': data.get(ELAPSED_TIME)
             })
 
     # Create DataFrame from activities
@@ -116,13 +117,8 @@ def process_activities(athlete_data, activity_data):
     # Sort by 'Datum' in descending order
     df = df.sort_values(by='Datum', ascending=False)
 
-    # Calculate tempo
-    df['Tempo'] = df.apply(lambda row: pace_from_distance_time(row['Afstand (km)'], row['Tijd']), axis=1)
-
     # Convert distance from meters to kilometers and round
-    df['Afstand (km)'] = df['Afstand (km)'].apply(lambda x: round(x / 1000, 1) if x is not None else 0)
-
-    df['Tijd'] = df['Tijd'].apply(format_time)
+    df['KM'] = df['KM'].apply(lambda x: round(x / 1000, 1) if x is not None else 0)
 
     # Reset the index to start from 1
     df.reset_index(drop=True, inplace=True)
