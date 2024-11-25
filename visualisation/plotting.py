@@ -75,8 +75,8 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
     # Create the base chart
     base = alt.Chart(plot_data).encode(
         x=alt.X('Weeks_Since_Start:Q', title='Week', scale=alt.Scale(domain=[0, TOTAL_WEEKS])),
-        y=alt.Y('Kilometers:Q', title='Kilometers', scale=alt.Scale(domain=[0, TOTAL_KMS])),
-        color=alt.Color('Type:N', scale=color_scale, legend=alt.Legend(title='Legenda'))
+        y=alt.Y('Kilometers:Q', title='', scale=alt.Scale(domain=[0, TOTAL_KMS])),
+        color=alt.Color('Type:N', scale=color_scale, legend=alt.Legend(title='Legenda', orient='bottom', direction='horizontal'))
     )
 
     # Create line for actual progress (solid line)

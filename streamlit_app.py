@@ -62,11 +62,31 @@ def main():
     st.write('14 mannen, 6 maanden, 1 challenge.')
     st.write(f'Week {weeks_count}/{TOTAL_WEEKS}')
     st.write(f"{round(total_kms_execute, 1)}/{TOTAL_KMS} km")
+
     st.bar_chart(bar_df, x="Eenheid", y="Waarde", stack=True, color='Kleur', horizontal=True, x_label='', y_label='')
+
+    # calculate the amount of km's that should be ran by now
+    target_km_per_week = TOTAL_KMS / TOTAL_WEEKS
+
+    # calculate the amount of km's that we're behind this week
+    km_behind = target_km_per_week * weeks_count - total_kms_execute
+
+    if km_behind > 0:
+        st.write(f"We lopen deze week {round(km_behind, 1)} km achter op schema.")
+
+        with st.expander("Meer details tonen"):
+            # Calculate km's per week needed to reach the goal
+            new_km_per_week = (TOTAL_KMS - total_kms_execute) / (TOTAL_WEEKS - weeks_count)
+            st.write(f"We moeten gemiddeld {round(new_km_per_week, 1)} km/w i.p.v. de oorspronkelijke {round(target_km_per_week, 1)} km/w lopen om de doelstelling te behalen.")
+
+            # Calculate KM's per week needed to reach the goal averaged per person
+            new_km_per_week_per_person = new_km_per_week / ranking_df.shape[0]
+            st.write(f"Dit komt neer op {round(new_km_per_week_per_person, 1)} km/w per persoon.")
 
     # Display ranking and activities with mobile-friendly adjustments
     st.write("Ranking")
-    st.dataframe(ranking_df, use_container_width=True, hide_index=True, column_config={
+    number_of_rows = ranking_df.shape[0]
+    st.dataframe(ranking_df, height=((number_of_rows + 1) * 35 + 3), use_container_width=True, hide_index=True, column_config={
         "Profile_pic": st.column_config.ImageColumn(""),
         "Laatste activiteit": st.column_config.DatetimeColumn("Laatste activiteit", format='DD-MM-YYYY'),
     })
