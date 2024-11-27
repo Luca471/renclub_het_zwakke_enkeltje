@@ -92,9 +92,6 @@ def main():
         "Laatste activiteit": st.column_config.DatetimeColumn("Laatste activiteit", format='DD-MM-YYYY'),
     })
 
-    # Sidebar for filtering
-    st.sidebar.header("Filter Options")
-    
     # Selectbox for 'Afstand' with default value '5km'
     afstand_options = ['All'] + list(best_efforts_df['Segment'].unique())
 

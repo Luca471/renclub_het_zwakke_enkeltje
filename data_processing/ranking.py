@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import datetime
 
+from utils.name_utils import process_names
+
 # Constants for keys
 ATHLETE_ID = 'athlete_id'
 ATHLETE_DATA = 'data'
@@ -33,11 +35,12 @@ def process_ranking(athlete_data, activity_data):
     Returns:
     pd.DataFrame: A DataFrame containing the processed ranking data for athletes.
     """
+    athlete_names = process_names(athlete_data)
     
     athletes = {
         athlete.get(ATHLETE_ID): {
             'Profile_pic': json.loads(athlete.get(ATHLETE_DATA)).get(PROFILE_PIC),
-            'Atleet': json.loads(athlete.get(ATHLETE_DATA)).get(FIRST_NAME),
+            'Atleet': athlete_names.get(athlete.get(ATHLETE_ID)),
             'Kilometers': 0,  # Keep as 'Kilometers' here for compatibility
             'Activiteiten': 0,
             LAST_ACTIVITY: DEFAULT_LAST_ACTIVITY

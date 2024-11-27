@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import datetime
 
+from utils.name_utils import process_names
+
 # Constants for keys
 ATHLETE_ID = 'athlete_id'
 ATHLETE_DATA = 'data'
@@ -83,10 +85,12 @@ def process_best_efforts(athlete_data, activity_data):
     """
     
     # Extract athlete information into a dictionary
+    athlete_names = process_names(athlete_data)
+
     athletes = {
         athlete[ATHLETE_ID]: {
             'Profile_pic': json.loads(athlete[ATHLETE_DATA]).get(PROFILE_PIC),
-            'Atleet': json.loads(athlete[ATHLETE_DATA]).get(FIRST_NAME),
+            'Atleet': athlete_names.get(athlete[ATHLETE_ID]),
         }
         for athlete in athlete_data
     }
