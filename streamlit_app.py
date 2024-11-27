@@ -14,7 +14,7 @@ from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS
 
 # Import local utility functions
 from utils import weeks_since, get_all_dynamodb_items
-from data_processing import process_ranking, process_activities
+from data_processing import process_ranking, process_activities, process_best_efforts
 from visualisation.plotting import create_progress_chart
 from visualisation.css import add_custom_css
 
@@ -41,6 +41,7 @@ def main():
     # Process data for ranking and activities
     ranking_df = process_ranking(athlete_data, activity_data)
     activity_df = process_activities(athlete_data, activity_data)
+    best_efforts_df = process_best_efforts(athlete_data, activity_data)
     total_kms_execute = sum(ranking_df['KM'])
     weeks_count = weeks_since(START_YEAR, START_WEEK)
 
@@ -89,6 +90,58 @@ def main():
     st.dataframe(ranking_df, height=((number_of_rows + 1) * 35 + 3), use_container_width=True, hide_index=True, column_config={
         "Profile_pic": st.column_config.ImageColumn(""),
         "Laatste activiteit": st.column_config.DatetimeColumn("Laatste activiteit", format='DD-MM-YYYY'),
+    })
+
+    # Sidebar for filtering
+    st.sidebar.header("Filter Options")
+    
+    # Selectbox for 'Afstand' with default value '5km'
+    afstand_options = ['All'] + list(best_efforts_df['Segment'].unique())
+
+    selected_afstand = st.selectbox(
+        "Afstand:",
+        options=afstand_options,
+        index=afstand_options.index('5K'),
+        key='afstand'
+    )
+
+    # Selectbox for 'Atleet' with default 'All'
+    atleet_options = ['All'] + list(best_efforts_df['Atleet'].unique())
+
+    selected_atleet = st.selectbox(
+        "Atleet:",
+        options=atleet_options,
+        index=atleet_options.index('All'),  # Default to 'All'
+        key='atleet'
+    )
+    
+    # Apply filters based on selected 'Afstand' and 'Atleet'
+    if selected_afstand == 'All' and selected_atleet == 'All':
+        # No filtering applied (all data)
+        filtered_df = best_efforts_df
+    elif selected_afstand == 'All':
+        # Filter only by Atleet if Afstand is 'All'
+        filtered_df = best_efforts_df[best_efforts_df['Atleet'] == selected_atleet]
+    elif selected_atleet == 'All':
+        # Filter only by Afstand if Atleet is 'All'
+        filtered_df = best_efforts_df[best_efforts_df['Segment'] == selected_afstand]
+    else:
+        # Filter by both Afstand and Atleet
+        filtered_df = best_efforts_df[
+            (best_efforts_df['Segment'] == selected_afstand) &
+            (best_efforts_df['Atleet'] == selected_atleet)
+        ]
+
+    filtered_df = filtered_df[["Profile_pic", "Atleet", "Segment", "Tijd", "Tempo", "Activiteit", "Datum"]]
+    filtered_df = filtered_df.rename(columns={'Segment': 'Afstand'})
+    filtered_df.reset_index(drop=True, inplace=True)
+    filtered_df.index += 1
+    
+    # Display filtered DataFrame
+    st.write("Best efforts")
+    st.dataframe(filtered_df, use_container_width=True, column_config={
+        "Profile_pic": st.column_config.ImageColumn(""),
+        "Datum": st.column_config.DatetimeColumn("Datum", format='DD-MM-YYYY HH:MM'),
     })
 
     st.write("Activiteiten")
