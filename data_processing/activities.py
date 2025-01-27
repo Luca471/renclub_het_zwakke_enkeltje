@@ -62,7 +62,7 @@ def format_time(seconds):
     else:
         return f"{minutes}m {remaining_seconds}s"  # Minutes format
 
-def process_activities(athlete_data, activity_data):
+def process_activities(athlete_data, activity_data, EXCLUDE_IDS):
     """
     Process athlete and activity data to calculate total kilometers, number of activities,
     and the date of the last activity for each athlete.
@@ -89,7 +89,7 @@ def process_activities(athlete_data, activity_data):
             'Profile_pic': json.loads(athlete[ATHLETE_DATA]).get(PROFILE_PIC),
             'Atleet': athlete_names.get(athlete[ATHLETE_ID]),
         }
-        for athlete in athlete_data
+        for athlete in athlete_data if athlete.get(ATHLETE_ID) not in EXCLUDE_IDS
     }
 
     activities = []

@@ -19,7 +19,7 @@ RUN_TYPE = 'Run'
 LAST_ACTIVITY = 'Laatste activiteit'
 DEFAULT_LAST_ACTIVITY = None
 
-def process_ranking(athlete_data, activity_data):
+def process_ranking(athlete_data, activity_data, EXCLUDE_IDS):
     """
     Process athlete and activity data to calculate total kilometers, number of activities,
     and the date of the last activity for each athlete.
@@ -44,7 +44,7 @@ def process_ranking(athlete_data, activity_data):
             'Kilometers': 0,  # Keep as 'Kilometers' here for compatibility
             'Activiteiten': 0,
             LAST_ACTIVITY: DEFAULT_LAST_ACTIVITY
-        } for athlete in athlete_data
+        } for athlete in athlete_data if athlete.get(ATHLETE_ID) not in EXCLUDE_IDS
     }
 
     for activity in activity_data:

@@ -10,7 +10,7 @@ import streamlit as st
 import altair as alt
 
 # Import local configuration
-from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS
+from config import START_YEAR, START_WEEK, TOTAL_WEEKS, TOTAL_KMS, EXCLUDE_IDS
 
 # Import local utility functions
 from utils import weeks_since, get_all_dynamodb_items
@@ -39,9 +39,10 @@ def main():
     activity_data = get_all_dynamodb_items(table)
 
     # Process data for ranking and activities
-    ranking_df = process_ranking(athlete_data, activity_data)
-    activity_df = process_activities(athlete_data, activity_data)
-    best_efforts_df = process_best_efforts(athlete_data, activity_data)
+    ranking_df = process_ranking(athlete_data, activity_data, EXCLUDE_IDS)
+    activity_df = process_activities(athlete_data, activity_data, EXCLUDE_IDS)
+    best_efforts_df = process_best_efforts(athlete_data, activity_data, EXCLUDE_IDS)
+
     total_kms_execute = sum(ranking_df['KM'])
     weeks_count = weeks_since(START_YEAR, START_WEEK)
 
@@ -60,7 +61,7 @@ def main():
 
     # Display main content
     st.title('Renclub het zwakke enkeltje')
-    st.write('14 mannen, 6 maanden, 1 challenge.')
+    st.write(f'{len(ranking_df)} mannen, 6 maanden, 1 challenge.')
     st.write(f'Week {weeks_count}/{TOTAL_WEEKS}')
     st.write(f"{round(total_kms_execute, 1)}/{TOTAL_KMS} km")
 
@@ -90,6 +91,12 @@ def main():
     st.dataframe(ranking_df, height=((number_of_rows + 1) * 35 + 3), use_container_width=True, hide_index=True, column_config={
         "Profile_pic": st.column_config.ImageColumn(""),
         "Laatste activiteit": st.column_config.DatetimeColumn("Laatste activiteit", format='DD-MM-YYYY'),
+    })
+
+    st.write("Activiteiten")
+    st.dataframe(activity_df, use_container_width=True, hide_index=True, column_config={
+        "Profile_pic": st.column_config.ImageColumn(""),
+        "Datum": st.column_config.DatetimeColumn("Datum", format='DD-MM-YYYY HH:MM'),
     })
 
     # Selectbox for 'Afstand' with default value '5km'
@@ -137,12 +144,6 @@ def main():
     # Display filtered DataFrame
     st.write("Best efforts")
     st.dataframe(filtered_df, use_container_width=True, column_config={
-        "Profile_pic": st.column_config.ImageColumn(""),
-        "Datum": st.column_config.DatetimeColumn("Datum", format='DD-MM-YYYY HH:MM'),
-    })
-
-    st.write("Activiteiten")
-    st.dataframe(activity_df, use_container_width=True, hide_index=True, column_config={
         "Profile_pic": st.column_config.ImageColumn(""),
         "Datum": st.column_config.DatetimeColumn("Datum", format='DD-MM-YYYY HH:MM'),
     })

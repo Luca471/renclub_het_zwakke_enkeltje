@@ -64,7 +64,7 @@ def format_time(seconds):
     else:
         return f"{minutes}m {remaining_seconds}s"  # Minutes format
 
-def process_best_efforts(athlete_data, activity_data):
+def process_best_efforts(athlete_data, activity_data, EXCLUDE_IDS):
     """
     Process athlete and activity data to calculate best efforts for each athlete
     from the 'best_efforts' field in the activity data and return only the fastest segment
@@ -92,7 +92,7 @@ def process_best_efforts(athlete_data, activity_data):
             'Profile_pic': json.loads(athlete[ATHLETE_DATA]).get(PROFILE_PIC),
             'Atleet': athlete_names.get(athlete[ATHLETE_ID]),
         }
-        for athlete in athlete_data
+        for athlete in athlete_data if athlete.get(ATHLETE_ID) not in EXCLUDE_IDS 
     }
 
     best_efforts = []

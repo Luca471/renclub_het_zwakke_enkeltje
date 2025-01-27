@@ -56,11 +56,11 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
 
     # Prepare data for plotting
     plot_data_actual = weekly_km_actual[['Weeks_Since_Start', 'Cumulative_KM']].copy()
-    plot_data_actual['Type'] = 'Werkelijke kilometers'
+    plot_data_actual['Type'] = 'Werkelijke KMs'
     plot_data_actual.rename(columns={'Cumulative_KM': 'Kilometers'}, inplace=True)
 
     plot_data_goal = weekly_km[['Weeks_Since_Start', 'Goal_KM']].copy()
-    plot_data_goal['Type'] = 'Doel kilometers'
+    plot_data_goal['Type'] = 'Doel KMs'
     plot_data_goal.rename(columns={'Goal_KM': 'Kilometers'}, inplace=True)
 
     # Combine the data
@@ -68,7 +68,7 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
 
     # Define color scale
     color_scale = alt.Scale(
-        domain=['Werkelijke kilometers', 'Doel kilometers'],
+        domain=['Werkelijke KMs', 'Doel KMs'],
         range=['#1f77b4', '#ff7f0e']  # Blue for actual, orange for goal
     )
 
@@ -81,19 +81,19 @@ def create_progress_chart(activity_df, weeks_count, TOTAL_WEEKS, TOTAL_KMS, STAR
 
     # Create line for actual progress (solid line)
     line_actual = base.transform_filter(
-        alt.datum.Type == 'Werkelijke kilometers'
+        alt.datum.Type == 'Werkelijke KMs'
     ).mark_line()
 
     # Create line for goal progress (dotted line)
     line_goal = base.transform_filter(
-        alt.datum.Type == 'Doel kilometers'
+        alt.datum.Type == 'Doel KMs'
     ).mark_line(
         strokeDash=[5, 5]  # Dotted line
     )
 
     # Combine the charts
     line_chart = alt.layer(line_actual, line_goal).properties(
-        title='Voortgang grafiekje'
+        title='Voortgang'
     )
 
     return line_chart
